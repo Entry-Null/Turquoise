@@ -1,0 +1,31 @@
+local EAX
+local ALX
+
+local JXm = [[
+EAX ==> {hi}
+ALX ==> {Hello}
+SUB ? |3| {2}
+]]
+
+
+str = JXm
+lines = {}
+for s in str:gmatch("[^\r\n]+") do
+    table.insert(lines, s)
+end
+--==>
+for i, v in pairs(lines) do
+    if v:find("PRP ==> ") then
+        print(v:match("%{(%g+)%}"))
+    elseif v:find("EAX ==>") then
+        print("{", v, "} Output:  Moved:", v:match("%{(%g+)%}"), " TO ==> EAX")
+        EAX = v:match("%{(%g+)%}")
+    elseif v:find("ALX ==>") then
+        print("{", v, "} Output:  Moved:", v:match("%{(%g+)%}"), " TO ==> ALX")
+        ALX = v:match("%{(%g+)%}")
+    elseif v:find("SUB ? ") then 
+        print("{", v, "} Output:  SUBTRACTED:", v:match("%{(%g+)%}"), " FROM ==>", v:match("%|(%g+)%|"), " IS EQ TO ", tonumber(v:match("%|(%g+)%|") - tonumber(v:match("%{(%g+)%}"))))
+    end
+end
+
+found=tostring(JXm):match("%[(%g+)%]")

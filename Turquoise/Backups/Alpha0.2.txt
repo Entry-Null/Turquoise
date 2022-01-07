@@ -1,0 +1,26 @@
+local EAX
+
+local JXm = [[
+EAX ==> {hi}
+EAX ==> {Hello}
+
+]]
+
+
+str = JXm
+lines = {}
+for s in str:gmatch("[^\r\n]+") do
+    table.insert(lines, s)
+end
+--==>
+for i, v in pairs(lines) do
+    if v:find("PRP ==> ") then
+        print(v:match("%{(%a+)%}"))
+    elseif v:find("EAX ==>") then
+        print("{", v, "} Output:  Moved:", v:match("%{(%a+)%}"), " TO ==> EAX")
+        EAX = v:match("%{(%a+)%}")
+    end
+end
+
+print(tostring(EAX))
+found=tostring(JXm):match("%[(%a+)%]")

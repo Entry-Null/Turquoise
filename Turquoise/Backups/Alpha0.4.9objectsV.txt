@@ -1,0 +1,60 @@
+local EAX
+local ALX
+
+local JXm = [[
+anything is a comment.
+
+SUB ? |1.324| {9213.2}
+REP ==> {'abc'} |EAX|
+REP ==> {'This'}
+REPR ? {'EAX'}
+]]
+local xyz = "hi"
+
+str = JXm
+lines = {}
+for s in str:gmatch("[^\r\n]+") do
+    table.insert(lines, s)
+end
+
+function setLocal(name, val)
+    local index = 1
+    while true do
+        local var_name, var_value = debug.getlocal(2, index)
+        if not var_name then break end
+        if var_name == name then 
+            debug.setlocal(2, index, val)
+        end
+        index = index + 1
+    end
+end
+
+function getLocal(name)
+    local index = 1
+    while true do
+        local var_name, var_value = debug.getlocal(2, index)
+        if not var_name then break end
+        if var_name == name then 
+            return var_value
+        end
+        index = index + 1
+    end
+end
+--local variable = "2s"
+--print(debug.getupvalue(function() variable() end, 1))
+--==>
+for i, v in pairs(lines) do
+    if v:find("REP ==> ") then
+        if v:match("%|(%g+)%|") == nil then
+        print("REP: ", v:match("%{'(%g+)%'}"))
+        else
+            setLocal(v:match("%|(%g+)%|"), v:match("%{'(%g+)%'}"))
+        end
+    elseif v:find("REPR ? ") then
+        print("REPR: ", getLocal(v:match("%{'(%g+)%'}")))
+    elseif v:find("ALX ==>") then
+        ALX = v:match("%{(%g+)%}")
+    elseif v:find("SUB ? ") then 
+        print(tonumber(v:match("%|(%g+)%|") - tonumber(v:match("%{(%g+)%}"))))
+    end
+end
